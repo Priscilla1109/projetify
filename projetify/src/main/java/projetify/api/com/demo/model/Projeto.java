@@ -9,11 +9,10 @@ import lombok.Data;
 
 import java.time.LocalDate;
 
-@Data
-@Entity
+@Data //extensão do lombok para getters e setters
+@Entity //indica que é uma entidade
 public class Projeto {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nome;
     private LocalDate dataInicio;
