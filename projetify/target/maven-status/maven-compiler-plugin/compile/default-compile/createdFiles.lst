@@ -1,0 +1,4 @@
+projetify\api\com\demo\controller\ControllerProjeto.class
+projetify\api\com\demo\model\Projeto.class
+projetify\api\com\demo\ProjetifyApplication.class
+projetify\api\com\demo\repository\RepositorioProjeto.class
