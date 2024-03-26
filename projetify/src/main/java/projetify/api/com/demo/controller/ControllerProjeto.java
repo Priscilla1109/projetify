@@ -11,36 +11,26 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/APIs/projetify") //necessário revisar path
+@RequestMapping("/APIs/projetify")
 public class ControllerProjeto {
     @Autowired
     private RepositorioProjeto repositorioProjeto;
 
     @GetMapping
     public List<Projeto> listarProjetos(){
-        return  repositorioProjeto.findAll();
+        return  repositorioProjeto.findAll(); //retorna uma lista de todos os projetos
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Projeto> buscarProjetoId(@PathVariable Long id){
         Optional<Projeto> projeto = repositorioProjeto.findById(id);
         return projeto.map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElse(ResponseEntity.notFound().build()); //retorna uma resposta de erro se não for encontrado
     }
 
     @PostMapping
     public ResponseEntity<Projeto> criarProjeto(@RequestBody Projeto projeto){
         Projeto novoProjeto = repositorioProjeto.save(projeto);
         return ResponseEntity.status(HttpStatus.CREATED).body(novoProjeto);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Projeto> atualizarProjeto(@PathVariable Long id, @RequestBody Projeto projetoAtualizado) {
-        Optional<Projeto> projetoExistente = repositorioProjeto.findById(id);
-        if (projetoExistente.isPresent()){
-            Projeto projeto = projetoExistente.get();
-            projeto.setNome(projetoAtualizado.getNome());
-
-        }
     }
 }
