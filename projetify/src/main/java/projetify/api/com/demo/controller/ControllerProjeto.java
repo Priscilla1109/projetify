@@ -38,7 +38,13 @@ public class ControllerProjeto {
     public ResponseEntity<Projeto> buscarProjetoId(@PathVariable Long id){
         Optional<Projeto> projeto = repositorioProjeto.findById(id); //classe optional lida com a possibilidade do projeto não exixtir no banco de dados
         return projeto.map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build()); //retorna uma resposta de erro se não for encontrado
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping
+    public ResponseEntity<Projeto> criarProjeto(@RequestBody Projeto projeto){
+        Projeto novoProjeto = repositorioProjeto.save(projeto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(novoProjeto);
     }
 
     @PutMapping("/{id}")
