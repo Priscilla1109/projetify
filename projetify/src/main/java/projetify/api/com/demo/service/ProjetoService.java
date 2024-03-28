@@ -3,6 +3,8 @@ package projetify.api.com.demo.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import projetify.api.com.demo.exception.ExistentProjectException;
+import projetify.api.com.demo.exception.InvalidDataException;
 import projetify.api.com.demo.mapper.MapperProjeto;
 import projetify.api.com.demo.model.Projeto;
 import projetify.api.com.demo.model.ProjetoRequest;
@@ -10,6 +12,7 @@ import projetify.api.com.demo.repository.RepositoryProjeto;
 
 import javax.sound.sampled.Port;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 //Classe responsável pelas regras de negócio
@@ -21,10 +24,10 @@ public class ProjetoService {
     public Projeto criarProjeto(ProjetoRequest projetoRequest){
         Projeto projetoDomain = MapperProjeto.toDomain(projetoRequest);
         if (repositoryProjeto.existsById(projetoDomain.getId())){
-            throw new RuntimeException("O projeto já existe!");
+            throw new ExistentProjectException("O projeto com esse ID já existe!");
         }
-        if (projetoDomain.isDataInicioAfterDataFim()){
-            throw new RuntimeException("A data de início não pode ser maior do que a data fim!");
+        if (projetoDomain.getDataInicio().isAfter(projetoDomain.getDataFim())){
+            throw new InvalidDataException("A data de início não pode ser maior do que a data fim!");
         }
         Projeto novoProjeto = repositoryProjeto.save(projetoDomain);
         return repositoryProjeto.save(novoProjeto);
@@ -36,7 +39,7 @@ public class ProjetoService {
 
     public Projeto buscarProjetoId(Long id){
         Optional<Projeto> projeto = repositoryProjeto.findById(id);
-        return projeto.orElseThrow(()-> new RuntimeException("Projeto não encontrado!"));
+        return projeto.orElseThrow(()-> new NoSuchElementException());
     }
 
     public Projeto atualizarProjeto(Long id, Projeto projetoAtualizado) {

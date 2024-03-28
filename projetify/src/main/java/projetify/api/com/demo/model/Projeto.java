@@ -25,7 +25,7 @@ public class Projeto {
     @Column (name = "dataFim")
     private  LocalDate dataFim;
 
-    public boolean isDataInicioAfterDataFim(){
+   /* public boolean isDataInicioAfterDataFim(){
         return dataFim.isAfter(dataFim);
-    }
+    }*/
 }
