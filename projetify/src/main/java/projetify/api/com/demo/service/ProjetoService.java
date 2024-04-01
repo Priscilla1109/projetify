@@ -45,7 +45,7 @@ public class ProjetoService {
     }
 
     public Projeto atualizarProjeto(Long id, Projeto projetoAtualizado) {
-        if (!repositoryProjeto.existsById(id)){
+        if (repositoryProjeto.existsById(id)){
             throw new ExistentProjectException("O projeto com esse ID já existe!");
         }
         Optional<Projeto> projetoExistente = repositoryProjeto.findById(id);
