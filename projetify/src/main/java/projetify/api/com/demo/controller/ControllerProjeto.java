@@ -27,8 +27,9 @@ public class ControllerProjeto {
     }
 
     @GetMapping
-    public List<Projeto> listarProjetos(){ //funciona
-        return projetoService.listarProjetos(); //retorna uma lista de todos os projetos
+    public List<Projeto> listarProjetos(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int pageSize){
+        List<Projeto> projetos = projetoService.listarProjetosPaginados(page, pageSize);
+        return projetos; //retorna uma lista de todos os projetos
     }
 
     @GetMapping("/{id}")

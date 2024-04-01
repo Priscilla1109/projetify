@@ -1,6 +1,9 @@
 package projetify.api.com.demo.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import projetify.api.com.demo.exception.ExistentProjectException;
@@ -23,18 +26,17 @@ public class ProjetoService {
 
     public Projeto criarProjeto(ProjetoRequest projetoRequest){
         Projeto projetoDomain = MapperProjeto.toDomain(projetoRequest);
-        if (repositoryProjeto.existsById(projetoDomain.getId())){
-            throw new ExistentProjectException("O projeto com esse ID já existe!");
-        }
         if (projetoDomain.getDataInicio().isAfter(projetoDomain.getDataFim())){
             throw new InvalidDataException("A data de início não pode ser maior do que a data fim!");
         }
-        Projeto novoProjeto = repositoryProjeto.save(projetoDomain);
-        return repositoryProjeto.save(novoProjeto);
+        return repositoryProjeto.save(projetoDomain);
     }
 
-    public List<Projeto> listarProjetos(){
-        return repositoryProjeto.findAll();
+    public List<Projeto> listarProjetosPaginados(int page, int pageSize){
+        //cria o objeto para fazer a consulta paginada
+        Pageable pageable = PageRequest.of(page, pageSize);
+        Page<Projeto> projetosPage = repositoryProjeto.findAll(pageable);
+        return projetosPage.getContent();
     }
 
     public Projeto buscarProjetoId(Long id){
@@ -43,8 +45,12 @@ public class ProjetoService {
     }
 
     public Projeto atualizarProjeto(Long id, Projeto projetoAtualizado) {
+        if (!repositoryProjeto.existsById(id)){
+            throw new ExistentProjectException("O projeto com esse ID já existe!");
+        }
         Optional<Projeto> projetoExistente = repositoryProjeto.findById(id);
-            Projeto projeto = projetoExistente.get();
+            Projeto projeto = new Projeto();
+            projeto.setId(id);
             projeto.setNome(projetoAtualizado.getNome());
             projeto.setDescricao(projetoAtualizado.getDescricao());
             projeto.setDataInicio(projetoAtualizado.getDataInicio());

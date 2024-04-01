@@ -9,8 +9,8 @@ import java.time.LocalDate;
 @Data //extensão do lombok para getters e setters
 public class Projeto {
     @Id //indica chave primária da tabela
-    @GeneratedValue(strategy = GenerationType.SEQUENCE) //delega o valor de geração da chave primária ao banco de dados
-    //@Column (name = "id") //define o nome da coluna associada ao atributo
+    @GeneratedValue(strategy = GenerationType.IDENTITY) //delega o valor de geração da chave primária ao banco de dados
+    @Column (name = "id") //define o nome da coluna associada ao atributo
     private Long id;
 
     @Column (name = "nome")
@@ -24,8 +24,4 @@ public class Projeto {
 
     @Column (name = "dataFim")
     private  LocalDate dataFim;
-
-   /* public boolean isDataInicioAfterDataFim(){
-        return dataFim.isAfter(dataFim);
-    }*/
 }

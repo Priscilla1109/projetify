@@ -11,7 +11,6 @@ public class MapperProjeto {
 
     public Projeto toDomain(ProjetoRequest projetoRequest) {
         Projeto projeto = new Projeto();
-        projeto.setId(1L);
         projeto.setNome(projetoRequest.getNome());
         projeto.setDescricao(projetoRequest.getDescricao());
         projeto.setDataInicio(LocalDate.parse(projetoRequest.getDataInicio()));
