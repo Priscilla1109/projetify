@@ -22,8 +22,9 @@ public class ControllerProjeto {
     private ProjetoService projetoService;
 
     @PostMapping
-    public Projeto criarProjeto(@RequestBody ProjetoRequest projetoRequest){
-        return projetoService.criarProjeto(projetoRequest);
+    public ResponseEntity<String> criarProjeto(@RequestBody ProjetoRequest projetoRequest){
+        projetoService.criarProjeto(projetoRequest);
+        return new ResponseEntity<>("Projeto criado com sucesso!", HttpStatus.CREATED);
     }
 
     @GetMapping
@@ -38,8 +39,9 @@ public class ControllerProjeto {
     }
 
     @PutMapping("/{id}")
-    public Projeto atualizarProjeto(@PathVariable Long id, @RequestBody Projeto projetoAtualizado) {
-        return projetoService.atualizarProjeto(id, projetoAtualizado);
+    public ResponseEntity<String> atualizarProjeto(@PathVariable Long id, @RequestBody Projeto projetoAtualizado) {
+        projetoService.atualizarProjeto(id, projetoAtualizado);
+        return new ResponseEntity<>("Projeto atualizado com sucesso!", HttpStatus.NO_CONTENT);
     }
 
     @DeleteMapping("/{id}")
