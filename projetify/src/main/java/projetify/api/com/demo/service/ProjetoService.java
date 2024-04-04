@@ -3,18 +3,14 @@ package projetify.api.com.demo.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import projetify.api.com.demo.exception.ExistentProjectException;
 import projetify.api.com.demo.exception.InvalidDataException;
-import projetify.api.com.demo.mapper.MapperProjeto;
+import projetify.api.com.demo.mapper.ProjetoMapper;
 import projetify.api.com.demo.model.Projeto;
 import projetify.api.com.demo.model.ProjetoRequest;
 import projetify.api.com.demo.repository.RepositoryProjeto;
 
-import javax.sound.sampled.Port;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -25,18 +21,19 @@ public class ProjetoService {
     private RepositoryProjeto repositoryProjeto;
 
     public Projeto criarProjeto(ProjetoRequest projetoRequest){
-        Projeto projetoDomain = MapperProjeto.toDomain(projetoRequest);
+        Projeto projetoDomain = ProjetoMapper.toDomain(projetoRequest);
+        if (!repositoryProjeto.existsById(projetoDomain.getId())){
+            throw new ExistentProjectException("O projeto com esse ID já existe!");
+        }
         if (projetoDomain.getDataInicio().isAfter(projetoDomain.getDataFim())){
             throw new InvalidDataException("A data de início não pode ser maior do que a data fim!");
         }
         return repositoryProjeto.save(projetoDomain);
     }
 
-    public List<Projeto> listarProjetosPaginados(int page, int pageSize){
-        //cria o objeto para fazer a consulta paginada
-        Pageable pageable = PageRequest.of(page, pageSize);
-        Page<Projeto> projetosPage = repositoryProjeto.findAll(pageable);
-        return projetosPage.getContent();
+    public Page<Projeto> listarProjetosPaginados(int page, int size){ //a classe PageSize ja contém informações sobre paginação
+        PageRequest pageRequest = PageRequest.of(page, size);
+        return repositoryProjeto.findAll(pageRequest);
     }
 
     public Projeto buscarProjetoId(Long id){
@@ -45,21 +42,24 @@ public class ProjetoService {
     }
 
     public Projeto atualizarProjeto(Long id, Projeto projetoAtualizado) {
-        if (repositoryProjeto.existsById(id)){
-            throw new ExistentProjectException("O projeto com esse ID já existe!");
-        }
-        Optional<Projeto> projetoExistente = repositoryProjeto.findById(id);
-            Projeto projeto = new Projeto();
-            projeto.setId(id);
+        Optional<Projeto> projetoAntigo = repositoryProjeto.findById(id);
+        if (projetoAntigo.isPresent()){
+            Projeto projeto = projetoAntigo.get();
+            projeto.setId(projetoAtualizado.getId());
             projeto.setNome(projetoAtualizado.getNome());
             projeto.setDescricao(projetoAtualizado.getDescricao());
             projeto.setDataInicio(projetoAtualizado.getDataInicio());
             projeto.setDataFim(projetoAtualizado.getDataFim());
+
             return repositoryProjeto.save(projeto);
+        } else {
+            throw new NoSuchElementException("Esse projeto não existe para ser atualizado!");
+        }
     }
 
-    public void deletarProjeto(Long id){
+    public boolean deletarProjeto(Long id){
         Projeto projeto = buscarProjetoId(id);
         repositoryProjeto.delete(projeto);
+        return true;
     }
 }

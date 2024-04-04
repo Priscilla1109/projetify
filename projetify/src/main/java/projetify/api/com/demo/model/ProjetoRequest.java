@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ProjetoRequest {
+    private Long id;
 
     private String nome;
 

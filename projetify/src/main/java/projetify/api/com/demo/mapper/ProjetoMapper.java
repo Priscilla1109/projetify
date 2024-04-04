@@ -7,10 +7,11 @@ import projetify.api.com.demo.model.ProjetoRequest;
 import java.time.LocalDate;
 
 @UtilityClass
-public class MapperProjeto {
+public class ProjetoMapper {
 
     public Projeto toDomain(ProjetoRequest projetoRequest) {
         Projeto projeto = new Projeto();
+        projeto.setId(projetoRequest.getId());
         projeto.setNome(projetoRequest.getNome());
         projeto.setDescricao(projetoRequest.getDescricao());
         projeto.setDataInicio(LocalDate.parse(projetoRequest.getDataInicio()));

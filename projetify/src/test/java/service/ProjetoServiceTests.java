@@ -9,9 +9,8 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.ResponseEntity;
 import projetify.api.com.demo.exception.InvalidDataException;
-import projetify.api.com.demo.mapper.MapperProjeto;
+import projetify.api.com.demo.mapper.ProjetoMapper;
 import projetify.api.com.demo.model.Projeto;
 import projetify.api.com.demo.model.ProjetoRequest;
 import projetify.api.com.demo.repository.RepositoryProjeto;
@@ -45,7 +44,7 @@ public class ProjetoServiceTests {
 		projetoRequest.setDescricao("testando projeto1");
 		projetoRequest.setDataInicio("2024-03-31");
 		projetoRequest.setDataFim("2024-04-04");
-		Projeto projetoDomain = MapperProjeto.toDomain(projetoRequest); //realiza a conervsão dos setters -- por que devo colocar a conversão aqui sendo que ja faz no metodo criarProjeto?
+		Projeto projetoDomain = ProjetoMapper.toDomain(projetoRequest); //realiza a conervsão dos setters -- por que devo colocar a conversão aqui sendo que ja faz no metodo criarProjeto?
 
 		//Comportamento esperado do mock
 		when(repositoryProjeto.save(ArgumentMatchers.any(Projeto.class))).thenReturn(projetoDomain);
@@ -66,7 +65,7 @@ public class ProjetoServiceTests {
 		projetoRequest.setDescricao("testando projeto1");
 		projetoRequest.setDataInicio("2024-03-31");
 		projetoRequest.setDataFim("2024-04-04");
-		Projeto projetoDomain = MapperProjeto.toDomain(projetoRequest);
+		Projeto projetoDomain = ProjetoMapper.toDomain(projetoRequest);
 
 		//Comportamento esperado do mock
 		when(repositoryProjeto.findById(1L)).thenReturn(Optional.of(projetoDomain));
@@ -96,12 +95,12 @@ public class ProjetoServiceTests {
 	@Test
 	public void testAtualizarProjeto(){
 		ProjetoRequest projetoRequest = new ProjetoRequest();
+		projetoRequest.setId(1L);
 		projetoRequest.setNome("Projeto Teste2");
 		projetoRequest.setDescricao("testando projeto2");
 		projetoRequest.setDataInicio("2024-03-31");
 		projetoRequest.setDataFim("2024-04-04");
-		Projeto projetoDomain = MapperProjeto.toDomain(projetoRequest); //realiza a conervsão dos setters -- por que devo colocar a conversão aqui sendo que ja faz no metodo criarProjeto?
-		projetoDomain.setId(1L);
+		Projeto projetoDomain = ProjetoMapper.toDomain(projetoRequest);  //realiza a conervsão dos setters -- por que devo colocar a conversão aqui sendo que ja faz no metodo criarProjeto?
 
 		//Simulação de atualização do projeto
 		ProjetoRequest projetoAtualizado = new ProjetoRequest();
@@ -109,7 +108,7 @@ public class ProjetoServiceTests {
 		projetoAtualizado.setDescricao("Descrição Atualizada");
 		projetoAtualizado.setDataInicio("2024-04-01");
 		projetoAtualizado.setDataFim("2024-04-10");
-		Projeto projetoDomainAtualizado = MapperProjeto.toDomain(projetoAtualizado);
+		Projeto projetoDomainAtualizado = ProjetoMapper.toDomain(projetoAtualizado);
 		projetoDomainAtualizado.setId(1L);
 
 		//Chama o método para atualizar o projeto da Controller
@@ -126,7 +125,7 @@ public class ProjetoServiceTests {
 		projetoRequest.setDescricao("testando projeto1");
 		projetoRequest.setDataInicio("2024-03-31");
 		projetoRequest.setDataFim("2024-04-04");
-		Projeto projetoDomain = MapperProjeto.toDomain(projetoRequest); //realiza a conervsão dos setters -- por que devo colocar a conversão aqui sendo que ja faz no metodo criarProjeto?
+		Projeto projetoDomain = ProjetoMapper.toDomain(projetoRequest); //realiza a conervsão dos setters -- por que devo colocar a conversão aqui sendo que ja faz no metodo criarProjeto?
 		projetoDomain.setId(1L);
 
 		//Comportamento esperado do mock
@@ -147,7 +146,7 @@ public class ProjetoServiceTests {
 		ProjetoRequest projeto = new ProjetoRequest();
 		projeto.setDataInicio("2024-04-10");
 		projeto.setDataFim("2024-04-01");
-		Projeto projetoDomain = MapperProjeto.toDomain(projeto);
+		Projeto projetoDomain = ProjetoMapper.toDomain(projeto);
 
 		when(repositoryProjeto.save(ArgumentMatchers.any(Projeto.class))).thenReturn(projetoDomain);
 

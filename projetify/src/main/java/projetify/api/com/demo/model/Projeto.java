@@ -24,4 +24,5 @@ public class Projeto {
 
     @Column (name = "dataFim")
     private  LocalDate dataFim;
+
 }
