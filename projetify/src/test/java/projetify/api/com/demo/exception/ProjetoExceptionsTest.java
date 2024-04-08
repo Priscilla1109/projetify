@@ -1,4 +1,4 @@
-package exception;
+package projetify.api.com.demo.exception;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

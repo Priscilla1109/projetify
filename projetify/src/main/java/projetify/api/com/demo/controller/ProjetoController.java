@@ -7,10 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import projetify.api.com.demo.mapper.ProjetoMapper;
-import projetify.api.com.demo.model.Meta;
-import projetify.api.com.demo.model.Projeto;
-import projetify.api.com.demo.model.ProjetoPageResponse;
-import projetify.api.com.demo.model.ProjetoRequest;
+import projetify.api.com.demo.model.*;
 import projetify.api.com.demo.service.ProjetoService;
 
 import java.util.HashMap;
@@ -27,9 +24,11 @@ public class ProjetoController {
     private ProjetoService projetoService;
 
     @PostMapping
-    public ResponseEntity<String> criarProjeto(@RequestBody ProjetoRequest projetoRequest){
-        projetoService.criarProjeto(projetoRequest);
-        return new ResponseEntity<>("Projeto criado com sucesso!", HttpStatus.CREATED);
+    public ResponseEntity<ProjetoResponse> criarProjeto(@RequestBody ProjetoRequest projetoRequest){
+        Projeto projeto = projetoService.criarProjeto(projetoRequest);
+        ProjetoResponse projetoResponse = ProjetoMapper.toResponse(projeto);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(projetoResponse);
     }
 
     @GetMapping("/projetos")
@@ -52,15 +51,17 @@ public class ProjetoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<String> buscarProjetoId(@PathVariable Long id){
-        projetoService.buscarProjetoId(id);
-        return new ResponseEntity<>("Projeto encontrado!", HttpStatus.OK);
+    public ResponseEntity<ProjetoResponse> buscarProjetoId(@PathVariable Long id){
+        Projeto projeto = projetoService.buscarProjetoId(id);
+        ProjetoResponse response = ProjetoMapper.toResponse(projeto);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> atualizarProjeto(@PathVariable Long id, @RequestBody Projeto projetoAtualizado) {
-        projetoService.atualizarProjeto(id, projetoAtualizado);
-        return new ResponseEntity<>("Projeto atualizado com sucesso!", HttpStatus.OK);
+    public ResponseEntity<ProjetoResponse> atualizarProjeto(@PathVariable Long id, @RequestBody Projeto projetoAtualizado) {
+        Projeto projeto = projetoService.atualizarProjeto(id, projetoAtualizado);
+        ProjetoResponse response = ProjetoMapper.toResponse(projeto);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @DeleteMapping("/{id}")

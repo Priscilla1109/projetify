@@ -3,12 +3,12 @@ package projetify.api.com.demo.mapper;
 import lombok.experimental.UtilityClass;
 import projetify.api.com.demo.model.Projeto;
 import projetify.api.com.demo.model.ProjetoRequest;
+import projetify.api.com.demo.model.ProjetoResponse;
 
 import java.time.LocalDate;
 
 @UtilityClass
 public class ProjetoMapper {
-
     public Projeto toDomain(ProjetoRequest projetoRequest) {
         Projeto projeto = new Projeto();
         projeto.setId(projetoRequest.getId());
@@ -17,5 +17,16 @@ public class ProjetoMapper {
         projeto.setDataInicio(LocalDate.parse(projetoRequest.getDataInicio()));
         projeto.setDataFim(LocalDate.parse(projetoRequest.getDataFim()));
         return projeto;
+    }
+
+    public static ProjetoResponse toResponse(Projeto projeto){
+        ProjetoResponse response = new ProjetoResponse();
+        response.setId(projeto.getId());
+        response.setNome(projeto.getNome());
+        response.setDescricao(projeto.getDescricao());
+        response.setDataInicio(projeto.getDataInicio());
+        response.setDataFim(projeto.getDataFim());
+
+        return response;
     }
 }

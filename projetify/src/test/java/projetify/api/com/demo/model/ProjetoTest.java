@@ -1,4 +1,4 @@
-package model;
+package projetify.api.com.demo.model;
 
 import org.junit.Test;
 import projetify.api.com.demo.model.Projeto;

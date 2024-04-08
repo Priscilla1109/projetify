@@ -1,3 +1,5 @@
+package projetify.api.com.demo;
+
 import org.junit.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import projetify.api.com.demo.ProjetifyApplication;

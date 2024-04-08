@@ -1,4 +1,4 @@
-package mapper;
+package projetify.api.com.demo.mapper;
 
 import org.junit.Test;
 import projetify.api.com.demo.mapper.ProjetoMapper;

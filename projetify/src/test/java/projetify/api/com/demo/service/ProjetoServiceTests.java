@@ -1,4 +1,4 @@
-package service;
+package projetify.api.com.demo.service;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -13,7 +13,7 @@ import projetify.api.com.demo.exception.InvalidDataException;
 import projetify.api.com.demo.mapper.ProjetoMapper;
 import projetify.api.com.demo.model.Projeto;
 import projetify.api.com.demo.model.ProjetoRequest;
-import projetify.api.com.demo.repository.RepositoryProjeto;
+import projetify.api.com.demo.repository.ProjetoRepository;
 import projetify.api.com.demo.service.ProjetoService;
 
 import java.util.NoSuchElementException;
@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class ProjetoServiceTests {
 	@Mock
-	private RepositoryProjeto repositoryProjeto; //cria uma instancia simulada da classe
+	private ProjetoRepository projetoRepository; //cria uma instancia simulada da classe
 
 	@InjectMocks
 	private ProjetoService projetoService; //injeta as dependências da classe durante a execução do teste
@@ -47,12 +47,12 @@ public class ProjetoServiceTests {
 		Projeto projetoDomain = ProjetoMapper.toDomain(projetoRequest); //realiza a conervsão dos setters -- por que devo colocar a conversão aqui sendo que ja faz no metodo criarProjeto?
 
 		//Comportamento esperado do mock
-		when(repositoryProjeto.save(ArgumentMatchers.any(Projeto.class))).thenReturn(projetoDomain);
+		when(projetoRepository.save(ArgumentMatchers.any(Projeto.class))).thenReturn(projetoDomain);
 
 		Projeto projetoCriado = projetoService.criarProjeto(projetoRequest);
 
 		//Realiza a verificação por quantidade de interação
-		verify(repositoryProjeto, times(1)).save(ArgumentMatchers.any(Projeto.class)); //foi usado o 2 pois o método é chamado duas vezes
+		verify(projetoRepository, times(1)).save(ArgumentMatchers.any(Projeto.class)); //foi usado o 2 pois o método é chamado duas vezes
 
 		//Verifica se o resultado retornado é igual ao esperado
 		assertEquals("Projeto Teste", projetoCriado.getNome());
@@ -68,7 +68,7 @@ public class ProjetoServiceTests {
 		Projeto projetoDomain = ProjetoMapper.toDomain(projetoRequest);
 
 		//Comportamento esperado do mock
-		when(repositoryProjeto.findById(1L)).thenReturn(Optional.of(projetoDomain));
+		when(projetoRepository.findById(1L)).thenReturn(Optional.of(projetoDomain));
 
 		//Chama o método de busca
 		Optional<Projeto> resultadoBusca = Optional.ofNullable(projetoService.buscarProjetoId(1L));
@@ -80,13 +80,13 @@ public class ProjetoServiceTests {
 	@Test(expected = NoSuchElementException.class)
 	public void testBuscaPorIdInexistetente (){
 		//Comportamento esperado do mock
-		when(repositoryProjeto.findById(2L)).thenReturn(Optional.empty());
+		when(projetoRepository.findById(2L)).thenReturn(Optional.empty());
 
 		//Chama o método de busca
 		Optional<Projeto> resultadoBusca = Optional.ofNullable(projetoService.buscarProjetoId(2L));
 
 		//Verifica se o método do repository foi chamado com o Id correto
-		verify(repositoryProjeto).findById(2L);
+		verify(projetoRepository).findById(2L);
 
 		//Verifica se o resultado retornado é igual ao esperado
 		assertEquals(Optional.empty(), resultadoBusca);
@@ -94,13 +94,13 @@ public class ProjetoServiceTests {
 
 	@Test
 	public void testAtualizarProjeto(){
-		ProjetoRequest projetoRequest = new ProjetoRequest();
-		projetoRequest.setId(1L);
-		projetoRequest.setNome("Projeto Teste2");
-		projetoRequest.setDescricao("testando projeto2");
-		projetoRequest.setDataInicio("2024-03-31");
-		projetoRequest.setDataFim("2024-04-04");
-		Projeto projetoDomain = ProjetoMapper.toDomain(projetoRequest);  //realiza a conervsão dos setters -- por que devo colocar a conversão aqui sendo que ja faz no metodo criarProjeto?
+		ProjetoRequest projetoExistente = new ProjetoRequest();
+		projetoExistente.setId(1L);
+		projetoExistente.setNome("Projeto Teste2");
+		projetoExistente.setDescricao("testando projeto2");
+		projetoExistente.setDataInicio("2024-03-31");
+		projetoExistente.setDataFim("2024-04-04");
+		Projeto projetoDomain = ProjetoMapper.toDomain(projetoExistente);  //realiza a conervsão dos setters -- por que devo colocar a conversão aqui sendo que ja faz no metodo criarProjeto?
 
 		//Simulação de atualização do projeto
 		ProjetoRequest projetoAtualizado = new ProjetoRequest();
@@ -111,11 +111,18 @@ public class ProjetoServiceTests {
 		Projeto projetoDomainAtualizado = ProjetoMapper.toDomain(projetoAtualizado);
 		projetoDomainAtualizado.setId(1L);
 
-		//Chama o método para atualizar o projeto da Controller
-		projetoService.atualizarProjeto(1L, projetoDomainAtualizado);
+		//Verificar se o projeto existe
+		when(projetoRepository.existsById(projetoDomain.getId())).thenReturn(true);
+		when(projetoRepository.findById(projetoDomainAtualizado.getId())).thenReturn(Optional.of(projetoDomain));
 
-		//Realiza a verificação por quantidade de interação
-		assertEquals(projetoDomain.getId(), projetoDomainAtualizado.getId());
+		//Simular o salvamento do projetoAtualizado
+		when(projetoRepository.save(any(Projeto.class))).thenReturn(projetoDomainAtualizado);
+
+		//Chamar o método
+		Projeto projetoAtualizadoRetornado = projetoService.atualizarProjeto(projetoDomainAtualizado.getId(), projetoDomainAtualizado);
+
+		//Verificar se o retorno está conforme o esperado
+		assertEquals(projetoDomainAtualizado, projetoAtualizadoRetornado);
 	}
 
 	@Test (expected = NoSuchElementException.class)
@@ -129,13 +136,13 @@ public class ProjetoServiceTests {
 		projetoDomain.setId(1L);
 
 		//Comportamento esperado do mock
-		when(repositoryProjeto.save(ArgumentMatchers.any(Projeto.class))).thenReturn(projetoDomain);
+		when(projetoRepository.save(ArgumentMatchers.any(Projeto.class))).thenReturn(projetoDomain);
 
 		//Ação do método
 		projetoService.deletarProjeto(1l);
 
 		//Realiza a verificação por quantidade de interação
-		verify(repositoryProjeto, times(1)).save(ArgumentMatchers.any(Projeto.class)); //foi usado o 2 pois o método é chamado duas vezes
+		verify(projetoRepository, times(1)).save(ArgumentMatchers.any(Projeto.class)); //foi usado o 2 pois o método é chamado duas vezes
 
 		//Verifica se o resultado retornado é igual ao esperado
 		assertEquals("O projeto com esse ID não existe!", projetoDomain.getId());
@@ -148,12 +155,12 @@ public class ProjetoServiceTests {
 		projeto.setDataFim("2024-04-01");
 		Projeto projetoDomain = ProjetoMapper.toDomain(projeto);
 
-		when(repositoryProjeto.save(ArgumentMatchers.any(Projeto.class))).thenReturn(projetoDomain);
+		when(projetoRepository.save(ArgumentMatchers.any(Projeto.class))).thenReturn(projetoDomain);
 
 		//Ação do método
 		projetoService.criarProjeto(projeto);
 
 		//Realiza a verificação por quantidade de interação
-		verify(repositoryProjeto, times(1)).save(ArgumentMatchers.any(Projeto.class));
+		verify(projetoRepository, times(1)).save(ArgumentMatchers.any(Projeto.class));
 	}
 }
