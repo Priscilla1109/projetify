@@ -157,7 +157,7 @@ public class ProjetoControllerTest {
         when(projetoService.atualizarProjeto(eq(1L), any(Projeto.class))).thenReturn(projetoDomainAtualizado);
 
         //Requisição PUT com os parametros atualizados
-        mockMvc.perform(put("/APIs/projetify/1" )
+        mockMvc.perform(put("/APIs/projetify/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(projetoRequest)))
                 //status da resposta
@@ -165,7 +165,29 @@ public class ProjetoControllerTest {
                 //corpo da resposta
                 .andExpect(jsonPath("$.id").value(projetoRequest.getId()))
                 .andExpect(jsonPath("$.nome").value(projetoRequest.getNome()))
-                .andExpect(jsonPath("$.descricao").value(projetoRequest.getDescricao()));
+                .andExpect(jsonPath("$.descricao").value(projetoRequest.getDescricao()))
+                .andExpect(jsonPath("$.dataInicio").value(projetoRequest.getDataInicio()))
+                .andExpect(jsonPath("$.dataFim").value(projetoRequest.getDataFim()));
     }
 
+    @Test
+    public void testDeletarProjeto() throws Exception {
+        ProjetoRequest projetoRequest = new ProjetoRequest();
+        projetoRequest.setId(1L);
+        projetoRequest.setNome("Nome atualizado");
+        projetoRequest.setDescricao("Descrição atualizada");
+        projetoRequest.setDataInicio("2024-04-08");
+        projetoRequest.setDataFim("2024-04-12");
+        Projeto projetoDomainAtualizado = ProjetoMapper.toDomain(projetoRequest);
+
+        when(projetoService.deletarProjeto(eq(1L))).thenReturn(true);
+
+        mockMvc.perform(delete("/APIs/projetify/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(projetoRequest)))
+                //status da resposta
+                .andExpect(status().isNoContent());
+
+        verify(projetoService, times(1)).deletarProjeto(projetoRequest.getId());
+    }
 }

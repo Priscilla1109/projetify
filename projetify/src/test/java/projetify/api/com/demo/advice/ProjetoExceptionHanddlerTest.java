@@ -35,7 +35,7 @@ public class ProjetoExceptionHanddlerTest {
     @Test
     public void testNoSuchElementException(){
         //mock para lançar a exceção
-        when(projetoService.buscarProjetoId(1L)).thenThrow(NoSuchElementException.class);
+        //when(projetoService.buscarProjetoId(1L)).thenThrow(NoSuchElementException.class);
 
         //chamada do método que vai ser testado
         ResponseEntity<Object> responseEntity = projetoExceptionHanddler.noSuchElementExeception(new NoSuchElementException());
@@ -47,7 +47,7 @@ public class ProjetoExceptionHanddlerTest {
 
     @Test
     public void testExistentProjectException(){
-        when(projetoService.criarProjeto(projetoRequest)).thenThrow(ExistentProjectException.class);
+        //when(projetoService.criarProjeto(projetoRequest)).thenThrow(ExistentProjectException.class);
 
         ResponseEntity<Object> responseEntity = projetoExceptionHanddler.existentProjectException(new ExistentProjectException("O projeto com esse ID já existe!"));
 
@@ -57,7 +57,7 @@ public class ProjetoExceptionHanddlerTest {
 
     @Test
     public void testInvalidDataException(){
-        when(projetoService.criarProjeto(projetoRequest)).thenThrow(InvalidDataException.class);
+        //when(projetoService.criarProjeto(projetoRequest)).thenThrow(InvalidDataException.class);
 
         ResponseEntity<Object> responseEntity = projetoExceptionHanddler.invalidDataException(new InvalidDataException("A data de início não pode ser maior do que a data fim!"));
 
