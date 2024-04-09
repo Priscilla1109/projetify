@@ -1,0 +1,13 @@
+projetify\api\com\demo\service\ProjetoService.class
+projetify\api\com\demo\ProjetifyApplication.class
+projetify\api\com\demo\model\Meta.class
+projetify\api\com\demo\controller\ProjetoController.class
+projetify\api\com\demo\model\ProjetoResponse.class
+projetify\api\com\demo\exception\InvalidDataException.class
+projetify\api\com\demo\advice\ProjetoExceptionHanddler.class
+projetify\api\com\demo\exception\ExistentProjectException.class
+projetify\api\com\demo\mapper\ProjetoMapper.class
+projetify\api\com\demo\model\ProjetoRequest.class
+projetify\api\com\demo\model\ProjetoPageResponse.class
+projetify\api\com\demo\model\Projeto.class
+projetify\api\com\demo\repository\ProjetoRepository.class

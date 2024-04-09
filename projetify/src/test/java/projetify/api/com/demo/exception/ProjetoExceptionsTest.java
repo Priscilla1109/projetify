@@ -7,17 +7,13 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import projetify.api.com.demo.controller.ProjetoController;
-import projetify.api.com.demo.exception.ExistentProjectException;
-import projetify.api.com.demo.exception.InvalidDataException;
-import projetify.api.com.demo.mapper.ProjetoMapper;
-import projetify.api.com.demo.model.Projeto;
 import projetify.api.com.demo.model.ProjetoRequest;
 import projetify.api.com.demo.service.ProjetoService;
+import projetify.api.com.demo.util.ProjetoRequestFixture;
 
 import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 @RunWith(MockitoJUnitRunner.class)
 @WebMvcTest(ProjetoController.class)
@@ -41,21 +37,17 @@ public class ProjetoExceptionsTest {
     @Test
     public void testExistentElementException(){
         try {
-            ProjetoRequest projetoRequest = new ProjetoRequest();
+            ProjetoRequest projetoRequest = ProjetoRequestFixture.get().withRandomData().build();
             projetoRequest.setId(1L);
             projetoRequest.setNome("Projeto Teste");
             projetoRequest.setDescricao("testando projeto1");
-            projetoRequest.setDataInicio("2024-03-31");
-            projetoRequest.setDataFim("2024-04-04");
 
             projetoService.criarProjeto(projetoRequest);
 
-            ProjetoRequest projetoRequestRepitido = new ProjetoRequest();
+            ProjetoRequest projetoRequestRepitido = ProjetoRequestFixture.get().withRandomData().build();
             projetoRequest.setId(1L);
             projetoRequest.setNome("Projeto Teste");
             projetoRequest.setDescricao("testando projeto1");
-            projetoRequest.setDataInicio("2024-03-31");
-            projetoRequest.setDataFim("2024-04-04");
 
             projetoService.criarProjeto(projetoRequestRepitido);
         } catch (ExistentProjectException e){
@@ -64,9 +56,12 @@ public class ProjetoExceptionsTest {
     }
 
     @Test
-    public void testInvalidDataException(){
-        InvalidDataException exception = new InvalidDataException("Data inválida!");
-
-        assertEquals("Data inválida!", exception.getMessage());
+    public void testInvalidDataException() {
+        try {
+            ProjetoRequest projetoRequest = ProjetoRequestFixture.get().withRandomData_ErrorData().build();
+            projetoService.criarProjeto(projetoRequest);
+        } catch (InvalidDataException e) {
+            assertEquals(InvalidDataException.class, e.getClass());
+        }
     }
 }

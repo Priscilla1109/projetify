@@ -1,27 +1,21 @@
 package projetify.api.com.demo.mapper;
 
 import org.junit.Test;
-import projetify.api.com.demo.mapper.ProjetoMapper;
 import projetify.api.com.demo.model.Projeto;
 import projetify.api.com.demo.model.ProjetoRequest;
 import projetify.api.com.demo.model.ProjetoResponse;
+import projetify.api.com.demo.util.ProjetoRequestFixture;
 
 import java.time.LocalDate;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
-import static org.mockito.Mockito.when;
 
 
 public class ProjetoMapperTest {
     @Test
     public void testToDomain(){
-        ProjetoRequest projetoRequest = new ProjetoRequest();
-        projetoRequest.setId(1L);
-        projetoRequest.setNome("Nome");
-        projetoRequest.setDescricao("Descrição");
-        projetoRequest.setDataInicio("2024-04-04");
-        projetoRequest.setDataFim("2024-04-10");
+        ProjetoRequest projetoRequest = ProjetoRequestFixture.get().withRandomData_ErrorData().build();
 
         Projeto projeto = ProjetoMapper.toDomain(projetoRequest);
 

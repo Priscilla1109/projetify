@@ -7,7 +7,6 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -17,7 +16,7 @@ import projetify.api.com.demo.mapper.ProjetoMapper;
 import projetify.api.com.demo.model.Projeto;
 import projetify.api.com.demo.model.ProjetoRequest;
 import projetify.api.com.demo.repository.ProjetoRepository;
-import projetify.api.com.demo.service.ProjetoService;
+import projetify.api.com.demo.util.ProjetoRequestFixture;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,7 +24,6 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
@@ -44,11 +42,8 @@ public class ProjetoServiceTests {
 
 	@Test
 	public void testCriarProjeto() {
-		ProjetoRequest projetoRequest = new ProjetoRequest();
+		ProjetoRequest projetoRequest = ProjetoRequestFixture.get().withRandomData().build();
 		projetoRequest.setNome("Projeto Teste");
-		projetoRequest.setDescricao("testando projeto1");
-		projetoRequest.setDataInicio("2024-03-31");
-		projetoRequest.setDataFim("2024-04-04");
 		Projeto projetoDomain = ProjetoMapper.toDomain(projetoRequest); //realiza a conervsão dos setters -- por que devo colocar a conversão aqui sendo que ja faz no metodo criarProjeto?
 
 		//Comportamento esperado do mock
@@ -65,12 +60,7 @@ public class ProjetoServiceTests {
 
 	@Test(expected = ExistentProjectException.class)
 	public void testCriarProjetoExistente() {
-		ProjetoRequest projetoRequest = new ProjetoRequest();
-		projetoRequest.setId(1L);
-		projetoRequest.setNome("Nome1");
-		projetoRequest.setDescricao("Descrição1");
-		projetoRequest.setDataInicio("2024-04-08");
-		projetoRequest.setDataFim("2024-04-12");
+		ProjetoRequest projetoRequest = ProjetoRequestFixture.get().withRandomData_ErrorData().build();
 
 		//Comportamento esperado do mock, para retornar um projeto existente
 		when(projetoRepository.existsById(projetoRequest.getId())).thenReturn(true);
@@ -80,20 +70,10 @@ public class ProjetoServiceTests {
 
 	@Test
 	public void testListarProjetos(){
-		ProjetoRequest projetoRequest1 = new ProjetoRequest();
-		projetoRequest1.setId(1L);
-		projetoRequest1.setNome("Nome1");
-		projetoRequest1.setDescricao("Descrição1");
-		projetoRequest1.setDataInicio("2024-04-08");
-		projetoRequest1.setDataFim("2024-04-12");
+		ProjetoRequest projetoRequest1 = ProjetoRequestFixture.get().withRandomData_ErrorData().build();
 		Projeto projeto1 = ProjetoMapper.toDomain(projetoRequest1);
 
-		ProjetoRequest projetoRequest2 = new ProjetoRequest();
-		projetoRequest2.setId(2L);
-		projetoRequest2.setNome("Nome2");
-		projetoRequest2.setDescricao("Descrição2");
-		projetoRequest2.setDataInicio("2024-04-08");
-		projetoRequest2.setDataFim("2024-04-12");
+		ProjetoRequest projetoRequest2 = ProjetoRequestFixture.get().withRandomData_ErrorData().build();
 		Projeto projeto2 = ProjetoMapper.toDomain(projetoRequest2);
 
 		//simulação da criação da lista de projetos paginada
@@ -112,11 +92,7 @@ public class ProjetoServiceTests {
 
 	@Test
 	public void testBuscaPorIdExistente(){
-		ProjetoRequest projetoRequest = new ProjetoRequest();
-		projetoRequest.setNome("Projeto Teste");
-		projetoRequest.setDescricao("testando projeto1");
-		projetoRequest.setDataInicio("2024-03-31");
-		projetoRequest.setDataFim("2024-04-04");
+		ProjetoRequest projetoRequest = ProjetoRequestFixture.get().withRandomData_ErrorData().build();
 		Projeto projetoDomain = ProjetoMapper.toDomain(projetoRequest);
 
 		//Comportamento esperado do mock
@@ -146,26 +122,16 @@ public class ProjetoServiceTests {
 
 	@Test
 	public void testAtualizarProjeto(){
-		ProjetoRequest projetoExistente = new ProjetoRequest();
-		projetoExistente.setId(1L);
-		projetoExistente.setNome("Projeto Teste2");
-		projetoExistente.setDescricao("testando projeto2");
-		projetoExistente.setDataInicio("2024-03-31");
-		projetoExistente.setDataFim("2024-04-04");
+		ProjetoRequest projetoExistente = ProjetoRequestFixture.get().withRandomData().build();
 		Projeto projetoDomain = ProjetoMapper.toDomain(projetoExistente);  //realiza a conervsão dos setters -- por que devo colocar a conversão aqui sendo que ja faz no metodo criarProjeto?
 
 		//Simulação de atualização do projeto
-		ProjetoRequest projetoAtualizado = new ProjetoRequest();
-		projetoAtualizado.setNome("Projeto Atualizado2");
-		projetoAtualizado.setDescricao("Descrição Atualizada");
-		projetoAtualizado.setDataInicio("2024-04-01");
-		projetoAtualizado.setDataFim("2024-04-10");
+		ProjetoRequest projetoAtualizado = ProjetoRequestFixture.get().withRandomData().build();
 		Projeto projetoDomainAtualizado = ProjetoMapper.toDomain(projetoAtualizado);
 		projetoDomainAtualizado.setId(1L);
 
 		//Verificar se o projeto existe
-		when(projetoRepository.existsById(projetoDomain.getId())).thenReturn(true);
-		//when(projetoRepository.findById(projetoDomainAtualizado.getId())).thenReturn(Optional.of(projetoDomain));
+		when(projetoRepository.existsById(projetoDomainAtualizado.getId())).thenReturn(true);
 
 		//Simular o salvamento do projetoAtualizado
 		when(projetoRepository.save(any(Projeto.class))).thenReturn(projetoDomainAtualizado);
@@ -192,11 +158,7 @@ public class ProjetoServiceTests {
 
 	@Test(expected = NoSuchElementException.class)
 	public void testDeletarProjeto() {
-		ProjetoRequest projetoRequest = new ProjetoRequest();
-		projetoRequest.setNome("Projeto Teste");
-		projetoRequest.setDescricao("testando projeto1");
-		projetoRequest.setDataInicio("2024-03-31");
-		projetoRequest.setDataFim("2024-04-04");
+		ProjetoRequest projetoRequest = ProjetoRequestFixture.get().withRandomData().build();
 		Projeto projetoDomain = ProjetoMapper.toDomain(projetoRequest); //realiza a conervsão dos setters -- por que devo colocar a conversão aqui sendo que ja faz no metodo criarProjeto?
 		projetoDomain.setId(1L);
 
@@ -215,15 +177,11 @@ public class ProjetoServiceTests {
 
 	@Test(expected = InvalidDataException.class)
 	public void testDataInicioIncorreta(){
-		ProjetoRequest projeto = new ProjetoRequest();
-		projeto.setDataInicio("2024-04-10");
-		projeto.setDataFim("2024-04-01");
-		Projeto projetoDomain = ProjetoMapper.toDomain(projeto);
-
-		//when(projetoRepository.save(ArgumentMatchers.any(Projeto.class))).thenReturn(projetoDomain);
+		ProjetoRequest projetoRequest = ProjetoRequestFixture.get().withRandomData_ErrorData().build();
+		Projeto projetoDomain = ProjetoMapper.toDomain(projetoRequest);
 
 		//Ação do método
-		projetoService.criarProjeto(projeto);
+		projetoService.criarProjeto(projetoRequest);
 
 		//Realiza a verificação por quantidade de interação
 		verify(projetoRepository, times(1)).save(ArgumentMatchers.any(Projeto.class));

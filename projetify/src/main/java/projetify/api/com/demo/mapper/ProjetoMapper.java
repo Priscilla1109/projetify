@@ -5,8 +5,6 @@ import projetify.api.com.demo.model.Projeto;
 import projetify.api.com.demo.model.ProjetoRequest;
 import projetify.api.com.demo.model.ProjetoResponse;
 
-import java.time.LocalDate;
-
 @UtilityClass
 public class ProjetoMapper {
     public Projeto toDomain(ProjetoRequest projetoRequest) {
@@ -14,8 +12,8 @@ public class ProjetoMapper {
         projeto.setId(projetoRequest.getId());
         projeto.setNome(projetoRequest.getNome());
         projeto.setDescricao(projetoRequest.getDescricao());
-        projeto.setDataInicio(LocalDate.parse(projetoRequest.getDataInicio()));
-        projeto.setDataFim(LocalDate.parse(projetoRequest.getDataFim()));
+        projeto.setDataInicio(projetoRequest.getDataInicio());
+        projeto.setDataFim(projetoRequest.getDataFim());
         return projeto;
     }
 

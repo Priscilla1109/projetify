@@ -4,7 +4,7 @@ import lombok.Data;
 
 import java.time.LocalDate;
 
-//Classe usada como DTO (objeto de transferência de dados) para enviar dados específicos de um projetode volta para o cliente em uma resposta HTTP
+//Classe usada como DTO (objeto de transferência de dados) para enviar dados específicos de um projeto de volta para o cliente em uma resposta HTTP
 @Data
 public class ProjetoResponse {
     private Long id;

@@ -10,10 +10,7 @@ import projetify.api.com.demo.mapper.ProjetoMapper;
 import projetify.api.com.demo.model.*;
 import projetify.api.com.demo.service.ProjetoService;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/APIs/projetify")
@@ -24,7 +21,7 @@ public class ProjetoController {
     private ProjetoService projetoService;
 
     @PostMapping
-    public ResponseEntity<ProjetoResponse> criarProjeto(@RequestBody ProjetoRequest projetoRequest){
+    public ResponseEntity<ProjetoResponse> criarProjeto(@Valid @RequestBody ProjetoRequest projetoRequest){
         Projeto projeto = projetoService.criarProjeto(projetoRequest);
         ProjetoResponse projetoResponse = ProjetoMapper.toResponse(projeto);
 
@@ -58,7 +55,7 @@ public class ProjetoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProjetoResponse> atualizarProjeto(@PathVariable Long id, @RequestBody Projeto projetoAtualizado) {
+    public ResponseEntity<ProjetoResponse> atualizarProjeto(@PathVariable Long id, @Valid @RequestBody Projeto projetoAtualizado) {
         Projeto projeto = projetoService.atualizarProjeto(id, projetoAtualizado);
         ProjetoResponse response = ProjetoMapper.toResponse(projeto);
         return ResponseEntity.status(HttpStatus.OK).body(response);
